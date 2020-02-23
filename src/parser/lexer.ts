@@ -1,64 +1,38 @@
-const LIMITS = ["(", ")", ";", ",", "[", "]", "{", "}"];
-const SPACE = " ";
+import { SPACE, LIMITS } from './constants'
+import { Char, Token } from './types'
 
-enum Token {
-  EOF,
-  FUNC,
-  VARIABLE,
-  OPEN_PAR,
-  CLOSE_PAR,
-  OPEN_CURLY_BRA,
-  CLOSE_CURLY_BRA,
-  OPEN_BRA,
-  CLOSE_BRA,
-  SEMI_COL,
-  COL,
-  SMALLER,
-  SMALLER_EQ,
-  GREATER,
-  GREATER_EQ,
-  ASSIGN,
-  DOUBLE_EQ,
-  TRIPLE_EQ,
-  MINUS,
-  PLUS,
-  STAR,
-  SLASH,
-  MODULO
-}
-
-const UNITS = {
-  eof: Token.EOF,
-  function: Token.FUNC,
-  var: Token.VARIABLE,
-  "(": Token.OPEN_PAR,
-  ")": Token.CLOSE_PAR,
-  "{": Token.OPEN_CURLY_BRA,
-  "}": Token.CLOSE_CURLY_BRA,
-  "[": Token.OPEN_BRA,
-  "]": Token.CLOSE_BRA,
-  ";": Token.SEMI_COL,
-  ",": Token.COL,
-  "<": Token.SMALLER,
-  "<=": Token.SMALLER_EQ,
-  ">": Token.GREATER,
-  ">=": Token.GREATER_EQ,
-  "=": Token.ASSIGN,
-  "==": Token.DOUBLE_EQ,
-  "===": Token.TRIPLE_EQ,
-  "-": Token.MINUS,
-  "+": Token.PLUS,
-  "*": Token.STAR,
-  "/": Token.SLASH,
-  "%": Token.MODULO
+const CHARS: { [index: string]: Char } = {
+  "eof": Char.EOF,
+  "function": Char.FUNC,
+  "var": Char.VARIABLE,
+  "(": Char.OPEN_PAR,
+  ")": Char.CLOSE_PAR,
+  "{": Char.OPEN_CURLY_BRA,
+  "}": Char.CLOSE_CURLY_BRA,
+  "[": Char.OPEN_BRA,
+  "]": Char.CLOSE_BRA,
+  ";": Char.SEMI_COL,
+  ",": Char.COL,
+  "<": Char.SMALLER,
+  "<=": Char.SMALLER_EQ,
+  ">": Char.GREATER,
+  ">=": Char.GREATER_EQ,
+  "=": Char.ASSIGN,
+  "==": Char.DOUBLE_EQ,
+  "===": Char.TRIPLE_EQ,
+  "-": Char.MINUS,
+  "+": Char.PLUS,
+  "*": Char.STAR,
+  "/": Char.SLASH,
+  "%": Char.MODULO
 };
 
 const scanner = (text: String): String[] => {
   const lexemes: String[] = [];
   let lex = "";
 
-  for (let i = 0; i < text.length; i++) {
-    if (text[i] === SPACE) {
+  for (let i = 0; i <= text.length; i++) {
+    if (text[i] === SPACE || i === text.length) {
       if (lex.length) lexemes.push(lex);
       lex = "";
       continue;
@@ -75,22 +49,26 @@ const scanner = (text: String): String[] => {
   return lexemes;
 };
 
-const tokennizer = (lexemes: String[]): any[] => {
-  console.log("top", Token.EOF);
-  const find = (value: String): String => {
-    // implement switch here
-    return 'lol'
+const tokennizer = (lexemes: String[]): Token[] => {
+  const getReadableTokenType = (char: Char): any => Char[char]
+
+  const find = (value: String): Char => {
+    if (!value || !value.length || value === undefined) return Char.UNKNOWN
+    const knownChar: Char = CHARS[value.toString()]
+    return knownChar || Char.UNKNOWN
   };
 
   return lexemes.map(lex => {
+    const type: Char = find(lex)
     return {
+      type,
+      typeName: getReadableTokenType(type),
       value: lex,
-      name: find(lex)
     };
   });
 };
 
-export default (text: String): String[] => {
+export default (text: String): Token[] => {
   const lexemes = scanner(text);
   return tokennizer(lexemes);
 };

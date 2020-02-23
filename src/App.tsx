@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import lexer from "./parser/lexer";
+import { lexer, types }  from "./parser";
 
 export default function App() {
   const [value, setValue] = React.useState<string>("");
-  const [lexemes, setLexemes] = React.useState<String[]>([]);
+  const [tokens, setTokens] = React.useState<types.Token[]>([]);
 
   const generateLexemes = () => {
-    setLexemes(lexer(value));
+    setTokens(lexer(value));
   };
 
   return (
@@ -20,12 +20,12 @@ export default function App() {
         placeholder="Type code"
       />
       <button onClick={generateLexemes}>APPLY LEXER</button>
-      {lexemes && (
+      {tokens && (
         <>
-          <h3> Lexemes List</h3>
+          <h3>Tokens List</h3>
           <ul>
-            {lexemes.map(lex => (
-              <li>{lex}</li>
+            {tokens.map((token: { typeName: String, value: String}, i) => (
+              <li key={`${i}-${token.typeName}-${token.value}`}>[{token.typeName}, {token.value}]</li>
             ))}
           </ul>
         </>
