@@ -12,8 +12,8 @@ export default function App() {
 
   return (
     <div className="App">
-      <h1>Paser</h1>
-      <h2>Start editing to see some magic happen!</h2>
+      <h1>Parser</h1>
+      <h2>Type code and lex it !</h2>
       <input
         value={value}
         onChange={({ target: { value } }) => setValue(value)}
