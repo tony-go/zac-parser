@@ -3,7 +3,8 @@ import { Char, Token } from './types'
 
 const CHARS: { [index: string]: Char } = {
   "eof": Char.EOF,
-  "function": Char.FUNC,
+  "fn": Char.FUNC,
+  "->": Char.ARROW_FUNC,
   "var": Char.VARIABLE,
   "(": Char.OPEN_PAR,
   ")": Char.CLOSE_PAR,
@@ -24,7 +25,9 @@ const CHARS: { [index: string]: Char } = {
   "+": Char.PLUS,
   "*": Char.STAR,
   "/": Char.SLASH,
-  "%": Char.MODULO
+  "%": Char.MODULO,
+  "'": Char.SIMPLE_QUOTE,
+  "\"": Char.DOUBLE_QUOTE,
 };
 
 const scanner = (text: String): String[] => {
@@ -50,15 +53,41 @@ const scanner = (text: String): String[] => {
 };
 
 const tokennizer = (lexemes: String[]): Token[] => {
+  let prevChar: Char;
+  let inFuncParenthese = false;
+  
   const getReadableTokenType = (char: Char): any => Char[char]
 
   const find = (value: String): Char => {
     if (!value || !value.length || value === undefined) return Char.UNKNOWN
-    const knownChar: Char = CHARS[value.toString()]
-    return knownChar || Char.UNKNOWN
+    const knownChar: Char = CHARS[value.toString()] || Char.UNKNOWN
+
+    if (knownChar === Char.OPEN_PAR && prevChar === Char.INDENTIFIER) {
+      inFuncParenthese = true
+    }
+    if (knownChar === Char.CLOSE_PAR && inFuncParenthese) {
+      inFuncParenthese = false
+    }
+    if (knownChar === Char.UNKNOWN && value.length > 1) {
+      if (prevChar === Char.VARIABLE || prevChar === Char.FUNC) {
+        prevChar = Char.INDENTIFIER
+        return Char.INDENTIFIER
+      }
+      if (prevChar === Char.DOUBLE_QUOTE || prevChar === Char.SIMPLE_QUOTE) {
+        prevChar = Char.STRING
+        return Char.STRING
+      }
+      if (inFuncParenthese) {
+        prevChar = Char.ARG
+        return Char.ARG
+      }
+
+    }
+    prevChar = knownChar
+    return knownChar
   };
 
-  return lexemes.map(lex => {
+  return lexemes.map((lex: String) => {
     const type: Char = find(lex)
     return {
       type,

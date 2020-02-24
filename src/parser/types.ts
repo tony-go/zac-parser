@@ -7,6 +7,7 @@ export interface Token {
 export enum Char {
   EOF,
   FUNC,
+  ARROW_FUNC,
   VARIABLE,
   OPEN_PAR,
   CLOSE_PAR,
@@ -28,5 +29,10 @@ export enum Char {
   STAR,
   SLASH,
   MODULO,
-  UNKNOWN
+  SIMPLE_QUOTE,
+  DOUBLE_QUOTE,
+  UNKNOWN,
+  INDENTIFIER,
+  STRING,
+  ARG,
 }

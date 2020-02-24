@@ -1,4 +1,4 @@
-export const LIMITS = ["(", ")", ";", ",", "[", "]", "{", "}"];
+export const LIMITS = ["(", ")", ";", ",", "[", "]", "{", "}", "\"", "'"];
 export const SPACE = " ";
 
 export default {
