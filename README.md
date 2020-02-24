@@ -4,6 +4,8 @@ During my learning about compiler I'll code a parser by myself without any tools
 
 This repo will contains a full documented parser writed in Javascript using one of the classical parsing pattern (I didn't choose which one yet !).
 
+Javascript is maybe not the best choice, but keep in mind that the first goal of this project is didactic.
+
 If I have enough time I'll record videos and share it with you.
 
 ## What is Zac ?
