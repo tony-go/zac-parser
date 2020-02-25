@@ -69,7 +69,7 @@ const tokennizer = (lexemes: String[]): Token[] => {
       inFuncParenthese = false
     }
     if (knownChar === Char.UNKNOWN && value.length > 1) {
-      if (prevChar === Char.VARIABLE || prevChar === Char.FUNC) {
+      if (prevChar === Char.VARIABLE || prevChar === Char.FUNC || (prevChar !== Char.DOUBLE_QUOTE && prevChar !== Char.SIMPLE_QUOTE)) {
         prevChar = Char.INDENTIFIER
         return Char.INDENTIFIER
       }
