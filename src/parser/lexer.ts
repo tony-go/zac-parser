@@ -1,5 +1,5 @@
-import { SPACE, LIMITS } from './constants'
-import { Char, Token } from './types'
+import { SPACES, LIMITS } from './constants'
+import { Char, Context, Token } from './types'
 
 const CHARS: { [index: string]: Char } = {
   "eof": Char.EOF,
@@ -28,6 +28,8 @@ const CHARS: { [index: string]: Char } = {
   "%": Char.MODULO,
   "'": Char.SIMPLE_QUOTE,
   "\"": Char.DOUBLE_QUOTE,
+  "//": Char.COMMENT_LINE,
+  "/->": Char.COMMENT_BLOCK,
 };
 
 const scanner = (text: String): String[] => {
@@ -35,7 +37,7 @@ const scanner = (text: String): String[] => {
   let lex = "";
 
   for (let i = 0; i <= text.length; i++) {
-    if (text[i] === SPACE || i === text.length) {
+    if (SPACES.indexOf(text[i]) !== -1 || i === text.length) {
       if (lex.length) lexemes.push(lex);
       lex = "";
       continue;
@@ -54,35 +56,55 @@ const scanner = (text: String): String[] => {
 
 const tokennizer = (lexemes: String[]): Token[] => {
   let prevChar: Char;
-  let inFuncParenthese = false;
-  
+  let context: Context | null = null;
+
   const getReadableTokenType = (char: Char): any => Char[char]
 
   const find = (value: String): Char => {
+
+    /**
+     *
+     * Todo
+     * - End of comment line -> // test \n name = "tony"
+     * - Multine line expression (white space)
+     * - Multiline comment
+     * - add EOF Char at the end
+     */
+
+     // handle error, empty cases
     if (!value || !value.length || value === undefined) return Char.UNKNOWN
+
+    // match lexeme with known chars
     const knownChar: Char = CHARS[value.toString()] || Char.UNKNOWN
 
-    if (knownChar === Char.OPEN_PAR && prevChar === Char.INDENTIFIER) {
-      inFuncParenthese = true
+    // set context (STRING, COMMENT)
+    if (knownChar === Char.SIMPLE_QUOTE || knownChar === Char.DOUBLE_QUOTE) {
+      context = context === Context.STRING ? null : Context.STRING
     }
-    if (knownChar === Char.CLOSE_PAR && inFuncParenthese) {
-      inFuncParenthese = false
+    if (knownChar === Char.COMMENT_LINE) {
+      context = context === Context.COMMENT ? null : Context.COMMENT
     }
+
+    // handle multi char lexemes
     if (knownChar === Char.UNKNOWN && value.length > 1) {
-      if (prevChar === Char.VARIABLE || prevChar === Char.FUNC || (prevChar !== Char.DOUBLE_QUOTE && prevChar !== Char.SIMPLE_QUOTE)) {
-        prevChar = Char.INDENTIFIER
-        return Char.INDENTIFIER
-      }
-      if (prevChar === Char.DOUBLE_QUOTE || prevChar === Char.SIMPLE_QUOTE) {
+      if (context === Context.STRING) {
         prevChar = Char.STRING
         return Char.STRING
       }
-      if (inFuncParenthese) {
-        prevChar = Char.ARG
-        return Char.ARG
+      if (context === Context.COMMENT) {
+        prevChar = Char.COMMENT
+        return Char.COMMENT
       }
-
+      if (
+        prevChar === Char.VARIABLE
+        || prevChar === Char.FUNC
+        || context !== Context.STRING
+      ) {
+        prevChar = Char.INDENTIFIER
+        return Char.INDENTIFIER
+      }
     }
+
     prevChar = knownChar
     return knownChar
   };

@@ -4,6 +4,11 @@ export interface Token {
   value: String // Lexeme
 }
 
+export enum Context {
+  COMMENT,
+  STRING
+}
+
 export enum Char {
   EOF,
   FUNC,
@@ -34,5 +39,7 @@ export enum Char {
   UNKNOWN,
   INDENTIFIER,
   STRING,
-  ARG,
+  COMMENT_LINE,
+  COMMENT_BLOCK,
+  COMMENT,
 }
