@@ -32,30 +32,43 @@ const CHARS: { [index: string]: Char } = {
   "/->": Char.COMMENT_BLOCK,
 };
 
+/**
+ * scanner func convert your text into an array of lexemes
+ * @api
+ * @param text: String
+ * @return String[]
+ */
+
 const scanner = (text: String): String[] => {
+  let buffer = "";
   const lexemes: String[] = [];
-  let lex = "";
 
   for (let i = 0; i <= text.length; i++) {
     if (SPACES.indexOf(text[i]) !== -1 || i === text.length) {
-      if (lex.length) lexemes.push(lex);
-      lex = "";
+      if (buffer.length) lexemes.push(buffer);
+      buffer = "";
       continue;
     }
     if (LIMITS.indexOf(text[i]) !== -1) {
-      if (lex.length) lexemes.push(lex);
+      if (buffer.length) lexemes.push(buffer);
       lexemes.push(text[i]);
-      lex = "";
+      buffer = "";
     } else {
-      lex += text[i];
+      buffer += text[i];
     }
   }
 
   return lexemes;
 };
 
-const tokennizer = (lexemes: String[]): Token[] => {
-  let prevChar: Char;
+/**
+ * tokenizer convert an array of lexemes into an array of tokens
+ * @api
+ * @param lexemes: String[]
+ * @return Tolken[]
+ */
+
+const tokenizer = (lexemes: String[]): Token[] => {
   let context: Context | null = null;
 
   const getReadableTokenType = (char: Char): any => Char[char]
@@ -65,9 +78,11 @@ const tokennizer = (lexemes: String[]): Token[] => {
     /**
      *
      * Todo
+     * - Start implement unit-test
      * - End of comment line -> // test \n name = "tony"
      * - Multine line expression (white space)
      * - Multiline comment
+     * - handle line break
      * - add EOF Char at the end
      */
 
@@ -78,34 +93,25 @@ const tokennizer = (lexemes: String[]): Token[] => {
     const knownChar: Char = CHARS[value.toString()] || Char.UNKNOWN
 
     // set context (STRING, COMMENT)
+    // @todo (@tony-go) : find something cleaner
     if (knownChar === Char.SIMPLE_QUOTE || knownChar === Char.DOUBLE_QUOTE) {
       context = context === Context.STRING ? null : Context.STRING
-    }
-    if (knownChar === Char.COMMENT_LINE) {
+    } else if (knownChar === Char.COMMENT_LINE || knownChar === Char.COMMENT_BLOCK) {
       context = context === Context.COMMENT ? null : Context.COMMENT
     }
 
-    // handle multi char lexemes
+    // handle unknown multi char lexemes
     if (knownChar === Char.UNKNOWN && value.length > 1) {
-      if (context === Context.STRING) {
-        prevChar = Char.STRING
-        return Char.STRING
-      }
-      if (context === Context.COMMENT) {
-        prevChar = Char.COMMENT
-        return Char.COMMENT
-      }
-      if (
-        prevChar === Char.VARIABLE
-        || prevChar === Char.FUNC
-        || context !== Context.STRING
-      ) {
-        prevChar = Char.INDENTIFIER
-        return Char.INDENTIFIER
+      switch (context) {
+        case Context.STRING:
+          return Char.STRING
+        case Context.COMMENT:
+          return Char.COMMENT
+        default :
+          return Char.INDENTIFIER
       }
     }
 
-    prevChar = knownChar
     return knownChar
   };
 
@@ -121,5 +127,5 @@ const tokennizer = (lexemes: String[]): Token[] => {
 
 export default (text: String): Token[] => {
   const lexemes = scanner(text);
-  return tokennizer(lexemes);
+  return tokenizer(lexemes);
 };
