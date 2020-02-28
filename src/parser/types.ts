@@ -5,11 +5,13 @@ export interface Token {
 }
 
 export enum Context {
+  NULL,
   COMMENT,
   STRING
 }
 
 export enum Char {
+  NULL,
   EOF,
   FUNC,
   ARROW_FUNC,
@@ -42,4 +44,5 @@ export enum Char {
   COMMENT_LINE,
   COMMENT_BLOCK,
   COMMENT,
+  LINE_BREAK,
 }
