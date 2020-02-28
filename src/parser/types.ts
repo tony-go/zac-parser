@@ -1,13 +1,13 @@
 export interface Token {
-  type: Char,
-  typeName: String,
+  type: Char
+  typeName: String
   value: String // Lexeme
 }
 
 export enum Context {
   NULL,
   COMMENT,
-  STRING
+  STRING,
 }
 
 export enum Char {

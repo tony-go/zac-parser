@@ -1,14 +1,14 @@
-import * as React from "react";
+import * as React from 'react'
 
-import { lexer, types }  from "./parser";
+import { lexer, types } from './parser'
 
 export default function App() {
-  const [value, setValue] = React.useState<string>("");
-  const [tokens, setTokens] = React.useState<types.Token[]>([]);
+  const [value, setValue] = React.useState<string>('')
+  const [tokens, setTokens] = React.useState<types.Token[]>([])
 
   const generateLexemes = () => {
-    setTokens(lexer(value));
-  };
+    setTokens(lexer(value))
+  }
 
   return (
     <div className="App">
@@ -24,12 +24,14 @@ export default function App() {
         <>
           <h3>Tokens List</h3>
           <ul>
-            {tokens.map((token: { typeName: String, value: String}, i) => (
-              <li key={`${i}-${token.typeName}-${token.value}`}>[{token.typeName}, {token.value}]</li>
+            {tokens.map((token: { typeName: String; value: String }, i) => (
+              <li key={`${i}-${token.typeName}-${token.value}`}>
+                [{token.typeName}, {token.value}]
+              </li>
             ))}
           </ul>
         </>
       )}
     </div>
-  );
+  )
 }
