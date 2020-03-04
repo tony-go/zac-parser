@@ -86,11 +86,6 @@ const tokenizer = (lexemes: String[]): Token[] => {
     /**
      *
      * Todo
-     * - Start implement unit-test
-     * - End of comment line -> // test \n name = "tony"
-     * - Multine line expression (white space)
-     * - Multiline comment
-     * - handle line break
      * - add EOF Char at the end
      */
 

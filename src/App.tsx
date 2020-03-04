@@ -1,6 +1,7 @@
 import * as React from 'react'
 
-import { lexer, types } from './parser'
+import { lexer } from './compiler'
+import * as types from './compiler/lexer/types'
 
 export default function App() {
   const [value, setValue] = React.useState<string>('')

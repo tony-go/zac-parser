@@ -1,6 +1,6 @@
 {
   "include": [
-    "./src/*"
+    "./src/*", "src/compiler/parser", "src/compiler/index.ts", "src/compiler/lexer/types.ts", "src/compiler/lexer/lexer.test.ts", "src/compiler/lexer/constants.ts"
   ],
   "compilerOptions": {
     "strict": true,
