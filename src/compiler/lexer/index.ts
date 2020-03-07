@@ -43,14 +43,17 @@ const CHARS: { [index: string]: Char } = {
  * @return String[]
  */
 
-const scanner = (text: String): String[] => {
+const scanner = (text: string): string[] => {
   let buffer = ''
-  const lexemes: String[] = []
+  const lexemes: string[] = []
 
   for (let i = 0; i <= text.length; i++) {
     // ignore spaces
     if (text[i] === SPACE || i === text.length) {
       if (buffer.length) lexemes.push(buffer)
+      if (i === text.length || buffer === ';') {
+        lexemes.push('eof')
+      }
       buffer = ''
       continue
     }
@@ -79,16 +82,10 @@ const scanner = (text: String): String[] => {
  * @return Tolken[]
  */
 
-const tokenizer = (lexemes: String[]): Token[] => {
+const tokenizer = (lexemes: string[]): Token[] => {
   let context: Context | null = null
 
-  const find = (value: String): Char => {
-    /**
-     *
-     * Todo
-     * - add EOF Char at the end
-     */
-
+  const find = (value: string): Char => {
     // handle error, empty cases
     if (!value || !value.length || value === undefined) return Char.UNKNOWN
 
@@ -108,8 +105,13 @@ const tokenizer = (lexemes: String[]): Token[] => {
       context = null
     }
 
-    // handle unknown multi char lexemes
+    // handle number
+    if (knownChar === Char.UNKNOWN && !Number.isNaN(parseInt(value))) {
+      return Char.NUMBER
+    }
+
     if (knownChar === Char.UNKNOWN && value.length > 1) {
+      // handle unknown multi char lexemes
       switch (context) {
         case Context.STRING:
           return Char.STRING
@@ -123,7 +125,7 @@ const tokenizer = (lexemes: String[]): Token[] => {
     return knownChar
   }
 
-  return lexemes.map((lex: String) => {
+  return lexemes.map((lex: string) => {
     const type: Char = find(lex)
     return {
       type,
@@ -133,7 +135,7 @@ const tokenizer = (lexemes: String[]): Token[] => {
   })
 }
 
-export default (text: String): Token[] => {
+export default (text: string): Token[] => {
   const lexemes = scanner(text)
   return tokenizer(lexemes)
 }

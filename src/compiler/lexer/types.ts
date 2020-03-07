@@ -45,4 +45,5 @@ export enum Char {
   COMMENT_BLOCK,
   COMMENT,
   LINE_BREAK,
+  NUMBER,
 }

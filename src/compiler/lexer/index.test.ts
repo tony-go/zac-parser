@@ -2,9 +2,8 @@ import lexer, { getReadableTokenType } from '.'
 import { Char } from './types'
 
 describe('#Lexer', () => {
-  it('should scan assignement', () => {
-    const tokens = lexer('name = tony;')
-    expect(tokens).toEqual([
+  it('should scan assignement => name = tony;', () => {
+    expect(lexer('name = tony;')).toEqual([
       {
         type: Char.INDENTIFIER,
         typeName: getReadableTokenType(Char.INDENTIFIER),
@@ -25,13 +24,16 @@ describe('#Lexer', () => {
         typeName: getReadableTokenType(Char.SEMI_COL),
         value: ';',
       },
+      {
+        type: Char.EOF,
+        typeName: getReadableTokenType(Char.EOF),
+        value: 'eof',
+      },
     ])
   })
 
-  it('should handle break line', () => {
-    const tokens = lexer('// test \n name = "tony"')
-
-    expect(tokens).toEqual([
+  it('should handle break line => // test \n name = "tony"', () => {
+    expect(lexer('// test \n name = "tony"')).toEqual([
       {
         type: Char.COMMENT_LINE,
         typeName: getReadableTokenType(Char.COMMENT_LINE),
@@ -72,13 +74,16 @@ describe('#Lexer', () => {
         typeName: getReadableTokenType(Char.DOUBLE_QUOTE),
         value: '"',
       },
+      {
+        type: Char.EOF,
+        typeName: getReadableTokenType(Char.EOF),
+        value: 'eof',
+      },
     ])
   })
 
-  it('should scan function', () => {
-    const tokens = lexer('fn get (name) -> {};')
-
-    expect(tokens).toEqual([
+  it('should scan function => fn get (name) -> {};', () => {
+    expect(lexer('fn get (name) -> {};')).toEqual([
       {
         type: Char.FUNC,
         typeName: getReadableTokenType(Char.FUNC),
@@ -123,6 +128,41 @@ describe('#Lexer', () => {
         type: Char.SEMI_COL,
         typeName: getReadableTokenType(Char.SEMI_COL),
         value: ';',
+      },
+      {
+        type: Char.EOF,
+        typeName: getReadableTokenType(Char.EOF),
+        value: 'eof',
+      },
+    ])
+  })
+
+  it('should handle operation', () => {
+    expect(lexer('233 + 4;')).toEqual([
+      {
+        type: Char.NUMBER,
+        typeName: getReadableTokenType(Char.NUMBER),
+        value: '233',
+      },
+      {
+        type: Char.PLUS,
+        typeName: getReadableTokenType(Char.PLUS),
+        value: '+',
+      },
+      {
+        type: Char.NUMBER,
+        typeName: getReadableTokenType(Char.NUMBER),
+        value: '4',
+      },
+      {
+        type: Char.SEMI_COL,
+        typeName: getReadableTokenType(Char.SEMI_COL),
+        value: ';',
+      },
+      {
+        type: Char.EOF,
+        typeName: getReadableTokenType(Char.EOF),
+        value: 'eof',
       },
     ])
   })
